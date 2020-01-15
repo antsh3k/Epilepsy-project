@@ -39,7 +39,7 @@ print("There are {} words in the combination of all review.".format(len(text)))
 
 
 # To create a mask
-brain_mask = np.array(Image.open(r"C:\Users\k1767582\Documents\GitHub\Epilepsy-project\Visualisations\brain_silhouette.png"))  # image of brain mask
+brain_mask = np.array(Image.open(r".\Visualisations\brain_silhouette.png"))  # image of brain mask
 
 # Create a word cloud image
 wc = WordCloud(background_color="white", max_words=1000, mask=brain_mask,
@@ -49,7 +49,7 @@ wc = WordCloud(background_color="white", max_words=1000, mask=brain_mask,
 wc.generate(text)
 
 # show
-plt.figure(figsize=[20,10])
+plt.figure(figsize=[20, 10])
 plt.imshow(wc, interpolation='bilinear')
 plt.axis("off")
 plt.show()
