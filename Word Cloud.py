@@ -1,4 +1,4 @@
-"""WordCloud generator from CSV"""
+"""WordCloud generator from text populated CSV"""
 
 import numpy as np
 import pandas as pd
@@ -16,7 +16,7 @@ df = pd.read_csv(file_path, index_col=0)
 # Data frame description
 print("There are {} observations and {} features in this dataset. \n".format(df.shape[0],df.shape[1]))
 
-# select the relevant text columns
+# select the relevant text columns of csv document
 text = df["_source.body_analysed"].iloc[1]
 
 # Create and generate a word cloud image:
