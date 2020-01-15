@@ -35,7 +35,7 @@ df = df.reset_index(drop=True)
 
 # checkout column names
 column_names = df.tail(1)
-print(column_names) # print column names
+print(column_names)  # print column names
 
 
 # reformat important column dtype
