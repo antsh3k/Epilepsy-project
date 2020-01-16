@@ -34,6 +34,8 @@ ann_df.to_csv(r"C:\Users\k1767582\Documents\GitHub\Epilepsy-project\20200115medc
 
 ###########################################
 
+def medcat_lr():
+    return
 
 def concept_count(df, concepts_freq=10):
     """This function will group by concept ID's in descending order by a default of concept frequency of 10
@@ -82,7 +84,10 @@ def learning_rate_by_cui(df, SNOMED_code, pretty_name=None):
     print(summary_df)
 
     # See synonyms
-    by_name = summary_df.groupby("value").count()
+    by_name = summary_df.groupby(['value'])\
+        .agg({'doc_id': 'count', 'correct': 'sum'})\
+        .rename(columns={'doc_id': 'Value count', 'correct': 'Correct sum'})
+    by_name['Percent Acc'] = by_name['Correct sum']/by_name['Value count'] * 100
     print(by_name)
 
     # Calculate accuracy per doc
@@ -94,7 +99,7 @@ def learning_rate_by_cui(df, SNOMED_code, pretty_name=None):
     accuracy_by_doc['Percent Acc'] = accuracy_by_doc['Correct sum']/accuracy_by_doc['Value count'] * 100
     print(accuracy_by_doc)
 
-    # Plot accuracy
+    # Plot accuracy for SNOMED concept
     plt.scatter(x=accuracy_by_doc.index, y=accuracy_by_doc['Percent Acc'], marker='x', s=20)
     plt.title("The learning rate for {}".format(SNOMED_code))
     plt.ylabel("Accuracy (%)")
