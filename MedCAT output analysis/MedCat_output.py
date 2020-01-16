@@ -14,7 +14,7 @@ with open(file_path + file) as f:
 
 print("The number of documents is", len(data2['documents']))  # number of documents
 
-# read document information to ann_df
+# read document information to doc_df
 doc_df = pd.DataFrame.from_dict(data2['documents'])
 doc_df['last_modified'] = pd.to_datetime(doc_df['last_modified'])
 
@@ -34,11 +34,10 @@ ann_df.to_csv(r"C:\Users\k1767582\Documents\GitHub\Epilepsy-project\20200115medc
 
 ###########################################
 
-def medcat_lr():
-    return
 
 def concept_count(df, concepts_freq=10):
-    """This function will group by concept ID's in descending order by a default of concept frequency of 10
+    """This function will group by concept ID's in descending order by a default of concept frequency of 10.
+    Use the ann_df
     """
     # Describe Cui
     groups_by_cui = df.groupby('cui')
@@ -53,11 +52,13 @@ def concept_count(df, concepts_freq=10):
     plt.xticks(rotation='vertical')
     plt.ylabel("Concept Count")
     plt.show()
+    plt.clf()
     return
 
 
 def learning_rate_by_cui(df, SNOMED_code, pretty_name=None):
-    """This function will return the learning rate for specific SNOMED code. Optional entry by synonym
+    """This function will return the learning rate for specific SNOMED code. Optional entry by synonym.
+    Use the doc_df
     """
     doc_id = []
     no_correct = []
@@ -106,5 +107,57 @@ def learning_rate_by_cui(df, SNOMED_code, pretty_name=None):
     plt.ylim(bottom=0, top=110)
     plt.xlabel("Document count")
     plt.legend(loc='right')
-    return plt.show()
+    plt.show()
+    plt.clf()
+    return
 
+
+def medcat_lr(df):
+    """This function will return the learning rate for overall MedCAT performance.
+    """
+    doc_id = []
+    no_correct = []
+    value = []
+    for index, row in df.iterrows():
+        temp_df = pd.DataFrame([a for a in row['annotations']])
+        for index, row2 in temp_df.iterrows():
+            doc_id.append(row['id'])
+            no_correct.append(row2["correct"])
+            value.append(row2["value"])
+    summary_df = pd.DataFrame(columns=["doc_id", "correct", "value"])
+    summary_df["doc_id"] = doc_id
+    summary_df["correct"] = no_correct
+    summary_df["value"] = value
+
+    # See synonyms
+    by_name = summary_df.groupby(['value']) \
+        .agg({'doc_id': 'count', 'correct': 'sum'}) \
+        .rename(columns={'doc_id': 'Value count', 'correct': 'Correct sum'})
+    by_name['Percent Acc'] = by_name['Correct sum'] / by_name['Value count'] * 100
+    print(by_name)
+
+    # Calculate accuracy per doc
+    accuracy_by_doc = summary_df.groupby(["doc_id"]).agg({'correct': 'sum', 'value': 'count'}) \
+        .reset_index() \
+        .rename(columns={'correct': 'Correct sum', 'value': 'Value count'})
+    accuracy_by_doc.index = accuracy_by_doc.index + 1  # shift index +1
+
+    accuracy_by_doc['Percent Acc'] = accuracy_by_doc['Correct sum'] / accuracy_by_doc['Value count'] * 100
+    print(accuracy_by_doc)
+
+    # Plot accuracy for SNOMED concept
+    plt.scatter(x=accuracy_by_doc.index, y=accuracy_by_doc['Percent Acc'], marker='x', s=20)
+
+    # Add trend line
+    # TODO: finish trend line
+
+
+    # Format figure layout
+    plt.title("Learning rate")
+    plt.ylabel("Accuracy (%)")
+    plt.ylim(bottom=0, top=110)
+    plt.xlabel("Document count")
+    plt.legend(loc='right')
+    plt.show()
+    plt.clf()
+    return
