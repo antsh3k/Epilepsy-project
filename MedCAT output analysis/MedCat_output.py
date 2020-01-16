@@ -1,4 +1,5 @@
 """ Analysing SNOMED annotations from the MedCAT output """
+
 # Import packages
 import json
 import pandas as pd
