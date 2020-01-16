@@ -4,6 +4,7 @@
 import json
 import pandas as pd
 import matplotlib.pyplot as plt
+from scipy import stats
 
 # Load MedCAT output
 file_path = r"C:\Users\k1767582\Desktop\MedCat output/"
@@ -30,7 +31,7 @@ print("The number of annotations added", ann_df[ann_df['manually_created']].shap
 print("The work each user has done is as follows", ann_df.groupby('user').count())  # participants in exercise
 
 # Write to csv
-ann_df.to_csv(r"C:\Users\k1767582\Documents\GitHub\Epilepsy-project\20200115medcatoutput.csv")
+# ann_df.to_csv(r"C:\Users\k1767582\Documents\GitHub\Epilepsy-project\20200115medcatoutput.csv")
 
 ###########################################
 
@@ -52,7 +53,6 @@ def concept_count(df, concepts_freq=10):
     plt.xticks(rotation='vertical')
     plt.ylabel("Concept Count")
     plt.show()
-    plt.clf()
     return
 
 
@@ -100,15 +100,25 @@ def learning_rate_by_cui(df, SNOMED_code, pretty_name=None):
     accuracy_by_doc['Percent Acc'] = accuracy_by_doc['Correct sum']/accuracy_by_doc['Value count'] * 100
     print(accuracy_by_doc)
 
+    # Plot
+    x = accuracy_by_doc.index
+    y = accuracy_by_doc['Percent Acc']
+    # Add trend line
+    slope, intercept, r_value, p_value, std_err = stats\
+        .linregress(x=accuracy_by_doc.index, y=accuracy_by_doc['Percent Acc'])
+    r2 = round(r_value**2, 2)
+    print("slope={}, intercept={}, r_value={}, p_value={}, std_err={}"
+          .format(round(slope, 2), round(intercept, 2), round(r_value, 2), round(p_value, 2), round(std_err, 2)))
+    plt.plot(x, intercept + slope * x, 'r', label="r^2 = {}".format(r2))
     # Plot accuracy for SNOMED concept
-    plt.scatter(x=accuracy_by_doc.index, y=accuracy_by_doc['Percent Acc'], marker='x', s=20)
+    plt.scatter(x, y, marker='x', s=20)
+
     plt.title("The learning rate for {}".format(SNOMED_code))
     plt.ylabel("Accuracy (%)")
     plt.ylim(bottom=0, top=110)
     plt.xlabel("Document count")
     plt.legend(loc='right')
     plt.show()
-    plt.clf()
     return
 
 
@@ -145,19 +155,23 @@ def medcat_lr(df):
     accuracy_by_doc['Percent Acc'] = accuracy_by_doc['Correct sum'] / accuracy_by_doc['Value count'] * 100
     print(accuracy_by_doc)
 
-    # Plot accuracy for SNOMED concept
-    plt.scatter(x=accuracy_by_doc.index, y=accuracy_by_doc['Percent Acc'], marker='x', s=20)
-
     # Add trend line
-    # TODO: finish trend line
+    slope, intercept, r_value, p_value, std_err = stats\
+        .linregress(x=accuracy_by_doc.index, y=accuracy_by_doc['Percent Acc'])
+    r2 = round(r_value**2, 2)
+    print("slope={}, intercept={}, r_value={}, p_value={}, std_err={}"
+          .format(round(slope, 2), round(intercept, 2), round(r_value, 2), round(p_value, 2), round(std_err, 2)))
 
-
+    # Plot accuracy
+    x = accuracy_by_doc.index
+    y = accuracy_by_doc['Percent Acc']
+    plt.scatter(x, y, marker='x', s=20, label=None)
+    plt.plot(x, intercept + slope*x, 'r', label="r^2 = {}".format(r2))
     # Format figure layout
-    plt.title("Learning rate")
+    plt.title("MedCAT Learning rate")
     plt.ylabel("Accuracy (%)")
     plt.ylim(bottom=0, top=110)
     plt.xlabel("Document count")
-    plt.legend(loc='right')
+    plt.legend(loc='lower right')
     plt.show()
-    plt.clf()
     return
