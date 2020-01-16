@@ -1,5 +1,5 @@
 """
-This script reads json files sort in a selected directory and combines them to a single df and writes the output to a csv
+This script reads json files sort in a selected directory and combines them to a single ann_df and writes the output to a csv
 """
 
 # import necessary packages
@@ -41,12 +41,12 @@ print(column_names)  # print column names
 # reformat important column dtype
 df['_source.documentoutput_doc_dob'] = df['_source.documentoutput_doc_dob'].astype(int)
 df['_source.updatetime'] = pd.to_datetime(df['_source.updatetime'])
-# df[['_source.client_createdwhen', '_source.client_deceaseddtm', '_source.client_dob', '_source.client_touchedwhen', '_source.clientvisit_closedtm', '_source.clientvisit_createdwhen', '_source.clientvisit_dischargedtm', '_source.clientvisit_planneddischargedtm', '_source.document_dateadded', '_source.document_datecreated', '_source.documentoutput_doc_dob', '_source.updatetime']] = pd.to_datetime(df[['_source.client_createdwhen', '_source.client_deceaseddtm', '_source.client_dob', '_source.client_touchedwhen', '_source.clientvisit_closedtm', '_source.clientvisit_createdwhen', '_source.clientvisit_dischargedtm', '_source.clientvisit_planneddischargedtm', '_source.document_dateadded', '_source.document_datecreated', '_source.documentoutput_doc_dob', '_source.updatetime']], errors='ignore', infer_datetime_format=True)
+# ann_df[['_source.client_createdwhen', '_source.client_deceaseddtm', '_source.client_dob', '_source.client_touchedwhen', '_source.clientvisit_closedtm', '_source.clientvisit_createdwhen', '_source.clientvisit_dischargedtm', '_source.clientvisit_planneddischargedtm', '_source.document_dateadded', '_source.document_datecreated', '_source.documentoutput_doc_dob', '_source.updatetime']] = pd.to_datetime(ann_df[['_source.client_createdwhen', '_source.client_deceaseddtm', '_source.client_dob', '_source.client_touchedwhen', '_source.clientvisit_closedtm', '_source.clientvisit_createdwhen', '_source.clientvisit_dischargedtm', '_source.clientvisit_planneddischargedtm', '_source.document_dateadded', '_source.document_datecreated', '_source.documentoutput_doc_dob', '_source.updatetime']], errors='ignore', infer_datetime_format=True)
 print(df.info())
 
 
 # Write complete set of epilepsy documents to_CSV [['_id', '_source.body_analysed']]
-# df.to_csv(r"C:\Users\k1767582\PycharmProjects\20191025_Epilepsyneurolologyletters\20191101_Epilepsy_dataset\20191101_Epilepsy_clinic_project\Epilepsy_letters_2013_20191001\complete_epilepsy_clinic.csv", header=True, index=False, escapechar='"')
+# ann_df.to_csv(r"C:\Users\k1767582\PycharmProjects\20191025_Epilepsyneurolologyletters\20191101_Epilepsy_dataset\20191101_Epilepsy_clinic_project\Epilepsy_letters_2013_20191001\complete_epilepsy_clinic.csv", header=True, index=False, escapechar='"')
 
 """
 # This code will select a stratified sample from a dataframe and write to csv
@@ -54,7 +54,7 @@ print(df.info())
 random.seed(42)
 
 # take a random 1000 sample
-selectedrows = df.sample(n=1000, replace=True, random_state=42)
+selectedrows = ann_df.sample(n=1000, replace=True, random_state=42)
 years = ["2013", "2014", "2015", "2016", "2017", "2018", "2019"]
 for a in years:
     a = int(a)

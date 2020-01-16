@@ -10,7 +10,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 # Read in CSV file
-file_path = input("Enter file path and file name here:")
+file_path = input("Enter file path and file name here:") # C:\Users\k1767582\PycharmProjects\20191025_Epilepsyneurolologyletters\20191101_Epilepsy_dataset\20191101_Epilepsy_clinic_project\Epilepsy_letters_2013_20191001\1000_clinic_letters.csv
 df = pd.read_csv(file_path, index_col=0)
 
 # Data frame description
