@@ -139,7 +139,7 @@ def medcat_lr(df):
     summary_df["correct"] = no_correct
     summary_df["value"] = value
 
-    # See synonyms
+    # Calculate accuracy value of each grouped synonym
     by_name = summary_df.groupby(['value']) \
         .agg({'doc_id': 'count', 'correct': 'sum'}) \
         .rename(columns={'doc_id': 'Value count', 'correct': 'Correct sum'})
@@ -153,18 +153,25 @@ def medcat_lr(df):
     accuracy_by_doc.index = accuracy_by_doc.index + 1  # shift index +1
 
     accuracy_by_doc['Percent Acc'] = accuracy_by_doc['Correct sum'] / accuracy_by_doc['Value count'] * 100
+    # Filter to only show documents with number of annotations > 10
+    accuracy_by_doc = accuracy_by_doc[accuracy_by_doc['Value count'] >= 10]
+    # Filter erroneous documents with 0 acc
+    accuracy_by_doc = accuracy_by_doc[accuracy_by_doc['Percent Acc'] >= 1]
     print(accuracy_by_doc)
+
+    # Plot
+    x = accuracy_by_doc.index
+    y = accuracy_by_doc['Percent Acc']
 
     # Add trend line
     slope, intercept, r_value, p_value, std_err = stats\
-        .linregress(x=accuracy_by_doc.index, y=accuracy_by_doc['Percent Acc'])
+        .linregress(x, y)
     r2 = round(r_value**2, 2)
     print("slope={}, intercept={}, r_value={}, p_value={}, std_err={}"
-          .format(round(slope, 2), round(intercept, 2), round(r_value, 2), round(p_value, 2), round(std_err, 2)))
+          .format(round(slope, 2), round(intercept, 2), round(r_value, 2), round(p_value, 10), round(std_err, 2)))
 
     # Plot accuracy
-    x = accuracy_by_doc.index
-    y = accuracy_by_doc['Percent Acc']
+
     plt.scatter(x, y, marker='x', s=20, label=None)
     plt.plot(x, intercept + slope*x, 'r', label="r^2 = {}".format(r2))
     # Format figure layout
