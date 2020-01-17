@@ -109,7 +109,7 @@ def learning_rate_by_cui(df, SNOMED_code, pretty_name=None):
     r2 = round(r_value**2, 2)
     print("slope={}, intercept={}, r_value={}, p_value={}, std_err={}"
           .format(round(slope, 2), round(intercept, 2), round(r_value, 2), round(p_value, 2), round(std_err, 2)))
-    plt.plot(x, intercept + slope * x, 'r', label="r^2 = {}".format(r2))
+    plt.plot(x, intercept + slope * x, 'r', label="r$^2$ = {}".format(r2))
     # Plot accuracy for SNOMED concept
     plt.scatter(x, y, marker='x', s=20)
 
@@ -172,8 +172,8 @@ def medcat_lr(df):
 
     # Plot accuracy
 
-    plt.scatter(x, y, marker='x', s=20, label=None)
-    plt.plot(x, intercept + slope*x, 'r', label="r^2 = {}".format(r2))
+    plt.scatter(x, y, marker='x', s=accuracy_by_doc['Value count'], label=None)
+    plt.plot(x, intercept + slope*x, 'r', label="r$^2$ = {}".format(r2))
     # Format figure layout
     plt.title("MedCAT Learning rate")
     plt.ylabel("% confirmed accurate")
