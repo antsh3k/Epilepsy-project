@@ -85,6 +85,7 @@ def learning_rate_by_cui(df, SNOMED_code, pretty_name=None):
     print(summary_df)
 
     # See synonyms
+    # TODO something here has gone wrong double check no mention of Levetiracetam
     by_name = summary_df.groupby(['value'])\
         .agg({'doc_id': 'count', 'correct': 'sum'})\
         .rename(columns={'doc_id': 'Value count', 'correct': 'Correct sum'})
@@ -108,23 +109,24 @@ def learning_rate_by_cui(df, SNOMED_code, pretty_name=None):
         .linregress(x=accuracy_by_doc.index, y=accuracy_by_doc['Percent Acc'])
     r2 = round(r_value**2, 2)
     print("slope={}, intercept={}, r_value={}, p_value={}, std_err={}"
-          .format(round(slope, 2), round(intercept, 2), round(r_value, 2), round(p_value, 2), round(std_err, 2)))
+          .format(round(slope, 2), round(intercept, 2), round(r_value, 2), p_value, round(std_err, 2)))
     plt.plot(x, intercept + slope * x, 'r', label="r$^2$ = {}".format(r2))
     # Plot accuracy for SNOMED concept
-    plt.scatter(x, y, marker='x', s=20)
+    plt.scatter(x, y, marker='o', s=accuracy_by_doc['Value count'])
 
-    plt.title("The learning rate for {}".format(SNOMED_code))
-    plt.ylabel("% confirmed accurate)")
+    plt.title("The Learning Rate for {}".format(SNOMED_code))
+    plt.ylabel("% Confirmed Accurate")
     plt.ylim(bottom=0, top=110)
-    plt.xlabel("Document count")
-    plt.legend(loc='right')
+    plt.xlabel("Document Count")
+    plt.legend(loc='lower right')
     plt.show()
     return
 
 
-def medcat_lr(df):
+def medcat_lr(df, top_freq_concepts=None):
     """This function will return the learning rate for overall MedCAT performance.
     """
+    # TODO create a top_freq_concepts option
     doc_id = []
     no_correct = []
     value = []
@@ -145,6 +147,8 @@ def medcat_lr(df):
         .rename(columns={'doc_id': 'Value count', 'correct': 'Correct sum'})
     by_name['Percent Acc'] = by_name['Correct sum'] / by_name['Value count'] * 100
     print(by_name)
+    # TODO test if working
+    print(by_name[by_name['Percent Acc'] == 0].sort_values(by=['Value count'], ascending=False))
 
     # Calculate accuracy per doc
     accuracy_by_doc = summary_df.groupby(["doc_id"]).agg({'correct': 'sum', 'value': 'count'}) \
@@ -168,17 +172,16 @@ def medcat_lr(df):
         .linregress(x, y)
     r2 = round(r_value**2, 2)
     print("slope={}, intercept={}, r_value={}, p_value={}, std_err={}"
-          .format(round(slope, 2), round(intercept, 2), round(r_value, 2), round(p_value, 10), round(std_err, 2)))
+          .format(round(slope, 2), round(intercept, 2), round(r_value, 2), p_value, round(std_err, 2)))
 
     # Plot accuracy
-
-    plt.scatter(x, y, marker='x', s=accuracy_by_doc['Value count'], label=None)
+    plt.scatter(x, y, marker='o', s=accuracy_by_doc['Value count'], label="Frequency of annotations")
     plt.plot(x, intercept + slope*x, 'r', label="r$^2$ = {}".format(r2))
     # Format figure layout
-    plt.title("MedCAT Learning rate")
-    plt.ylabel("% confirmed accurate")
+    plt.title("MedCAT Learning Rate")
+    plt.ylabel("% Confirmed Accurate")
     plt.ylim(bottom=0, top=110)
-    plt.xlabel("Document count")
+    plt.xlabel("Document Count")
     plt.legend(loc='lower right')
     plt.show()
     return
