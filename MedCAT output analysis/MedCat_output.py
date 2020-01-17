@@ -114,7 +114,7 @@ def learning_rate_by_cui(df, SNOMED_code, pretty_name=None):
     plt.scatter(x, y, marker='x', s=20)
 
     plt.title("The learning rate for {}".format(SNOMED_code))
-    plt.ylabel("Accuracy (%)")
+    plt.ylabel("% confirmed accurate)")
     plt.ylim(bottom=0, top=110)
     plt.xlabel("Document count")
     plt.legend(loc='right')
@@ -176,7 +176,7 @@ def medcat_lr(df):
     plt.plot(x, intercept + slope*x, 'r', label="r^2 = {}".format(r2))
     # Format figure layout
     plt.title("MedCAT Learning rate")
-    plt.ylabel("Accuracy (%)")
+    plt.ylabel("% confirmed accurate")
     plt.ylim(bottom=0, top=110)
     plt.xlabel("Document count")
     plt.legend(loc='lower right')
