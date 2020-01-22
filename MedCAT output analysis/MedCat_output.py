@@ -5,6 +5,14 @@ import json
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy import stats
+from medcat.cdb import CDB
+import os
+
+
+# Load Concept database (CDB) used for the project
+cdb = CDB()
+cdb.load_dict(os.path.join("F:/", "snomed.dat"))
+
 
 # Load MedCAT output
 file_path = r"C:\Users\k1767582\Desktop\MedCat output/"
@@ -45,16 +53,34 @@ def concept_count(df, concepts_freq=10):
     """
     # Describe Cui
     groups_by_cui = df.groupby('cui')
-    print(list(groups_by_cui))
+    # print(list(groups_by_cui))
 
     # Plot the count of each CUI
     a = groups_by_cui.count()
     a = a.sort_values(by='acc', ascending=False)
 
-    plt.plot(a[a['acc'] >= concepts_freq])
-    plt.title("Count of concepts >= {}".format(concepts_freq))  # select CUIs with count >= concepts_freq
-    plt.xticks(rotation='vertical')
-    plt.ylabel("Concept Count")
+    # convert cui to pretty name
+    pretty_name = []
+    a = a.reset_index()
+
+    for index, row in a.iterrows():
+        value = row["cui"]
+        p_name = cdb.cui2pretty_name[value]
+        pretty_name.append(p_name)
+    a["Concept_name"] = pretty_name
+    print(a)
+
+    # Filter df by top concept frequency
+    a = a[a['acc'] >= concepts_freq]
+
+    # Plot box plot of snomed concept frequency
+    x = a["Concept_name"]
+    y = a["acc"]
+    plt.bar(x, y)
+    plt.title("Count of SNOMED concepts >= {}".format(concepts_freq))  # select CUIs with count >= concepts_freq
+    plt.xticks(fontsize=7, rotation=45, horizontalalignment="right")
+    plt.ylim(bottom=0)
+    plt.ylabel("Total Concept Count")
     plt.show()
     return
 
@@ -111,7 +137,8 @@ def new_concept_freq(df):
                 doc_id.append(index + 1)
                 concepts.append(row2["cui"])
             else:
-                pass
+                doc_id.append(index + 1)
+                concepts.append(None)
     summary_df = pd.DataFrame(columns=["doc_id", "cui"])
     summary_df["doc_id"] = doc_id
     summary_df["cui"] = concepts
