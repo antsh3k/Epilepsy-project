@@ -15,11 +15,11 @@ with open(file_path + file) as f:
 
 print("The number of documents is", len(data2['documents']))  # number of documents
 
-# read document information to doc_df
+# Read document information to doc_df
 doc_df = pd.DataFrame.from_dict(data2['documents'])
 doc_df['last_modified'] = pd.to_datetime(doc_df['last_modified'])
 
-# read annotations to ann_df
+# Read annotations to ann_df
 ann_df = pd.DataFrame([a for d in data2['documents'] for a in d['annotations']])
 ann_df['last_modified'] = pd.to_datetime(ann_df['last_modified'])
 
@@ -56,6 +56,46 @@ def concept_count(df, concepts_freq=10):
     plt.title("Count of concepts >= {}".format(concepts_freq))  # select CUIs with count >= concepts_freq
     plt.xticks(rotation='vertical')
     plt.ylabel("Concept Count")
+    plt.show()
+    return
+
+
+def new_concept_freq(df):
+    """
+    :param df: The DataFrame containing the mentions of concepts per document (Use df:doc_df)
+    :return: A figure of first mention concept count per document
+    """
+    doc_id = []
+    concepts = []
+
+    for index, row in df.iterrows():
+        temp_df = pd.DataFrame([a for a in row['annotations']])
+        for index2, row2 in temp_df.iterrows():
+            if row2["cui"] not in concepts:
+                doc_id.append(index + 1)
+                concepts.append(row2["cui"])
+            else:
+                pass
+    summary_df = pd.DataFrame(columns=["doc_id", "cui"])
+    summary_df["doc_id"] = doc_id
+    summary_df["cui"] = concepts
+    print(summary_df)
+    summary_by_doc = summary_df.groupby(['doc_id'])\
+        .agg({'cui': 'count'})\
+        .rename(columns={'doc_id': 'Cui count'})
+    print(summary_by_doc)
+    # Plot
+    x = summary_by_doc.index
+    y = summary_by_doc['cui']
+
+    # Plot cui count per document
+    plt.bar(x, y, label="Total: {}".format(x[-1]))
+    plt.title("Distribution of New Concepts Encountered")
+    plt.ylabel("New Concept Count per Document")
+    plt.ylim(bottom=0)
+    plt.xlim(left=0)
+    plt.xlabel("Document Number")
+    plt.legend(loc='center right')
     plt.show()
     return
 
