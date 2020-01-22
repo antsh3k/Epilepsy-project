@@ -37,8 +37,12 @@ print("The work each user has done is as follows", ann_df.groupby('user').count(
 
 
 def concept_count(df, concepts_freq=10):
-    """This function will group by concept ID's in descending order by a default of concept frequency of 10.
-    Use the ann_df
+    """
+    This function will group by concept ID's in descending order by a default of concept frequency of 10.
+
+    :param df: Use the ann_df
+    :param concepts_freq:
+    :return:
     """
     # Describe Cui
     groups_by_cui = df.groupby('cui')
@@ -58,7 +62,10 @@ def concept_count(df, concepts_freq=10):
 
 def learning_rate_by_cui(df, SNOMED_code, pretty_name=None):
     """This function will return the learning rate for specific SNOMED code. Optional entry by synonym.
-    Use the doc_df
+    :param df: Use the doc_df
+    :param SNOMED_code:
+    :param pretty_name:
+    :return:
     """
     doc_id = []
     no_correct = []
@@ -85,7 +92,7 @@ def learning_rate_by_cui(df, SNOMED_code, pretty_name=None):
     print(summary_df)
 
     # See synonyms
-    # TODO something here has gone wrong double check no mention of Levetiracetam
+    # TODO something here has gone wrong double check no mention of Levetiracetam or topiramate etc
     by_name = summary_df.groupby(['value'])\
         .agg({'doc_id': 'count', 'correct': 'sum'})\
         .rename(columns={'doc_id': 'Value count', 'correct': 'Correct sum'})
@@ -125,6 +132,9 @@ def learning_rate_by_cui(df, SNOMED_code, pretty_name=None):
 
 def medcat_lr(df, top_freq_concepts=None):
     """This function will return the learning rate for overall MedCAT performance.
+    :param df: Use the doc_df
+    :param top_freq_concepts:
+    :return:
     """
     # TODO create a top_freq_concepts option
     doc_id = []
@@ -185,3 +195,5 @@ def medcat_lr(df, top_freq_concepts=None):
     plt.legend(loc='lower right')
     plt.show()
     return
+
+
