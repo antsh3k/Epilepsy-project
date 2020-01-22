@@ -78,7 +78,7 @@ def concept_count(df, concepts_freq=10):
     y = a["acc"]
     plt.bar(x, y)
     plt.title("Count of SNOMED concepts >= {}".format(concepts_freq))  # select CUIs with count >= concepts_freq
-    plt.xticks(fontsize=7, rotation=45, horizontalalignment="right")
+    plt.xticks(fontsize=10, rotation=25, horizontalalignment="right")
     plt.ylim(bottom=0)
     plt.ylabel("Total Concept Count")
     plt.show()
@@ -153,7 +153,7 @@ def new_concept_freq(df):
 
     # Plot cui count per document
     plt.bar(x, y, label="Total: {}".format(x[-1]))
-    plt.title("Distribution of New Concepts Encountered")
+    plt.title("Distribution of New SNOMED Concepts Encountered")
     plt.ylabel("New Concept Count per Document")
     plt.ylim(bottom=0)
     plt.xlim(left=0)
@@ -203,8 +203,8 @@ def learning_rate_by_cui(df, SNOMED_code, pretty_name=None):
     print(by_name)
 
     # Calculate accuracy per doc
-    accuracy_by_doc = summary_df.groupby(["doc_id"]).agg({'correct': 'sum', 'value': 'count'})\
-        .reset_index()\
+    accuracy_by_doc = summary_df.groupby(["doc_id"]).agg({'correct': 'sum', 'value': 'count'}) \
+        .reset_index() \
         .rename(columns={'correct': 'Correct sum', 'value': 'Value count'})
     accuracy_by_doc.index = accuracy_by_doc.index + 1  # shift index +1
 
@@ -220,9 +220,10 @@ def learning_rate_by_cui(df, SNOMED_code, pretty_name=None):
     r2 = round(r_value**2, 2)
     print("slope={}, intercept={}, r_value={}, p_value={}, std_err={}"
           .format(round(slope, 2), round(intercept, 2), round(r_value, 2), p_value, round(std_err, 2)))
-    plt.plot(x, intercept + slope * x, 'r', label="r$^2$ = {}".format(r2))
+    # plt.plot(x, intercept + slope * x, 'r', label="r$^2$ = {}".format(r2))
+
     # Plot accuracy for SNOMED concept
-    plt.scatter(x, y, marker='o', s=accuracy_by_doc['Value count'])
+    plt.scatter(x, y, marker='o', s=accuracy_by_doc['Value count']+30)
 
     plt.title("The Learning Rate for {}".format(SNOMED_code))
     plt.ylabel("% Confirmed Accurate")
@@ -294,7 +295,8 @@ def medcat_lr(df, top_freq_concepts=None):
     plt.title("MedCAT Learning Rate")
     plt.ylabel("% Confirmed Accurate")
     plt.ylim(bottom=0, top=110)
-    plt.xlabel("Document Count")
+    plt.xlim(left=0)
+    plt.xlabel("Document Number")
     plt.legend(loc='lower right')
     plt.show()
     return
