@@ -15,8 +15,8 @@ cdb.load_dict(os.path.join("F:/", "snomed.dat"))
 
 
 # Load MedCAT output
-file_path = r"C:\Users\k1767582\Desktop\MedCat output/"
-file = r"20200110_1000 Epilepsy letters_with_txt.json"
+file_path = r"C:\Users\k1767582\Desktop\MedCat output/"  # F:/
+file = r"20200110_1000 Epilepsy letters_with_txt.json"  # Epilepsy_MedCAT_Export_With_Text_2020-01-28_12_20_08.json
 
 with open(file_path + file) as f:
     data2 = json.load(f)
