@@ -11,12 +11,12 @@ import os
 
 # Load Concept database (CDB) used for the project
 cdb = CDB()
-cdb.load_dict(os.path.join("F:/", "snomed.dat"))
+cdb.load_dict(os.path.join("/Volumes/NO NAME/", "snomed.dat"))
 
 
 # Load MedCAT output
-file_path = r"F:/"  # add file path
-file = r"Epilepsy_MedCAT_Export_With_Text_2020-01-28_12_20_08.json"  # Add file name
+file_path = r"/Volumes/NO NAME/"  # add file path
+file = r"AShek_project_EXport_MedCAT_Export_With_Text_2020-01-30_16_07_02.json"  # Add file name
 
 with open(file_path + file) as f:
     data = json.load(f)
@@ -33,7 +33,8 @@ ann_df = pd.DataFrame([a for c in data['projects'] for b in c['documents'] for a
 ann_df['last_modified'] = pd.to_datetime(ann_df['last_modified'])
 
 print("The number of deleted annotations is", ann_df[ann_df['deleted']].shape[0])  # Deleted
-print("The number of correct annotations is",
+print("The number of correct annotations is",ending order by a default of concept frequency of 10.
+    :param df: Use the ann_df
       ann_df[~ann_df['deleted'] & ~ann_df['alternative'] & ~ann_df['manually_created']].shape[0])  # Correct
 print("The number of alternative concepts are", ann_df[ann_df['alternative']].shape[0])  # Alternatives
 print("The number of annotations added", ann_df[ann_df['manually_created']].shape[0])  # Add annotation
@@ -42,13 +43,24 @@ print("The work each user has done is as follows", ann_df.groupby('user').count(
 # Write to csv
 # ann_df.to_csv(r"C:\Users\k1767582\Documents\GitHub\Epilepsy-project\20200115medcatoutput.csv")
 
+
 ###########################################
 
+df_name = pd.DataFrame(doc_df['annotations'][0])
+df_name = df_name.sort_values('start')
+pretty_name = []
+for index, row in df_name.iterrows():
+    value = row["cui"]
+    p_name = cdb.cui2pretty_name[value]
+    pretty_name.append(p_name)
+df_name["Concept_name"] = pretty_name
+df_name = df_name[["start", "end", "value", "cui", "Concept_name", "meta_anns"]]
 
+
+################
 def concept_count(df, concepts_freq=10):
     """
-    This function will group by concept ID's in descending order by a default of concept frequency of 10.
-    :param df: Use the ann_df
+    This function will group by concept ID's in desc
     :param concepts_freq:
     :return:
     """
